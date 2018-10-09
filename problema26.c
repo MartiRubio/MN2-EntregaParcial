@@ -6,11 +6,13 @@
 /**
 * Funció per a omplir la matriu
 */
-void fill_matrix(double **matrix, int n)
+double** fill_matrix(int n)
 {
     int i = 0;
     int j = 0;
+    double** matrix = (double**)malloc(sizeof(double*) * n);
     for (i = 0; i < n; i++) {
+        matrix[i] = (double*)malloc(sizeof(double) * n);
         for (j = 0; j < n; j++) {
             if((i+j) % 2 != 0){
                 matrix[i][j] = 0;
@@ -25,16 +27,7 @@ void fill_matrix(double **matrix, int n)
             }
         }
     }
-    fill_diagonal(matrix, n);
-    return matrix;
-}
-
-/**
-* Funció per a omplir la diagonal de la matriu
-*/
-void fill_diagonal(double **matrix, int n)
-{
-    int i = 0;
+    // Omplim la diagonal
     for(i=0; i < n; i++){
         if(i%2==0){
             matrix[i][i] = 3;
@@ -49,8 +42,9 @@ void fill_diagonal(double **matrix, int n)
 /**
 * Funció per a omplir el vector
 */
-void fill_vector(double **matrix)
+double* fill_vector(int n)
 {
+    double* vectorb = (double*)malloc(sizeof(double) * n);
     int i = 0;
     for(i = 0; i<n; i++){
         if(i%2==0){
@@ -62,11 +56,31 @@ void fill_vector(double **matrix)
 }
 
 /**
+* Funció per a omplir el vector solució
+*/
+double* fill_vector_solution(int n)
+{
+    double* vectorx = (double*)malloc(sizeof(double) * n);
+    int i = 0;
+    for(i = 0; i<n; i++){
+        vectorx[i] = 0;
+    }
+    return vectorx;
+}
+
+/**
 * Funció per a calcular la norma infinit d'una matriu
 */
-void infinite_norm(double **matrix)
+double infinite_norm(double *vectorb, double *vectorx, int n)
 {
-
+    int i = 1;
+    double norm = fabs(vectorb[0] - vectorx[0]);
+    for (i = 1; i <n; i++){
+        if (norm > fabs(vectorb[i] - vectorx[i])){
+            norm = fabs(vectorb[i] - vectorx[i]);
+        }
+    }
+    return norm;
 }
 
 int main()
@@ -74,16 +88,16 @@ int main()
     // Creem les variables a usar
     int dimension = 1000000;
     double max_error = pow(10., -12.);
-    double* vectorb = (double*)malloc(sizeof(double) * dimension);
-    double* vector_solution = (double*)malloc(sizeof(double) * dimension);
-    double** matrixA = (double**)malloc(sizeof(double*) * dimension);
+    double* vectorb;
+    double* vector_solution;
+    double** matrixA;
     
     // Omplim la matriu
-    fill_matrix(matrixA, dimension);
+    matrixA = fill_matrix(dimension);
 
     // Omplim el vector
-    fill_vector(vectorb, dimension);
-    
+    vectorb = fill_vector(dimension);
+    vector_solution = fill_vector_solution(dimension);
 
     // Alliberem memòria
     int i = 0;
