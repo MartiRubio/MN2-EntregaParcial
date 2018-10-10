@@ -4,52 +4,16 @@
 
 
 /**
-* Funció per a omplir la matriu
-*/
-double** fill_matrix(int n)
-{
-    int i = 0;
-    int j = 0;
-    double** matrix = (double**)malloc(sizeof(double*) * n);
-    for (i = 0; i < n; i++) {
-        matrix[i] = (double*)malloc(sizeof(double) * n);
-        for (j = 0; j < n; j++) {
-            if((i+j) % 2 != 0){
-                matrix[i][j] = 0;
-            }
-            else{
-                if((i+j) % 4 == 0){
-                    matrix[i][j] = 1;
-                }
-                else{
-                    matrix[i][j] = -1;  
-                }
-            }
-        }
-    }
-    // Omplim la diagonal
-    for(i=0; i < n; i++){
-        if(i%2==0){
-            matrix[i][i] = 3;
-        }
-        else{
-            matrix[i][i] = 4;
-        }
-    }
-    return matrix;
-}
-
-/**
-* Funció per a omplir el vector
+* Funció per a omplir el vector solució
 */
 double* fill_vector(int n)
 {
     double* vectorb = (double*)malloc(sizeof(double) * n);
     int i = 0;
     for(i = 0; i<n; i++){
-        if(i%2==0){
-            vectorb[i] = i+2/n;
-            vectorb[i+1] = i+2/n;
+        if (i%2 == 0){
+            vectorb[i] = (i+2)/n;
+            vectorb[i+1] = (i+2)/n;
         }
     }
     return vectorb;
@@ -83,6 +47,48 @@ double infinite_norm(double *vectorb, double *vectorx, int n)
     return norm;
 }
 
+/**
+* Funció que retorna el valor de la matriu en la posició (i,j)
+*/
+int matrix_postion(int i, int j, int n)
+{
+    if (i == j){
+        if(i%2==0){
+            return 3;
+        }
+        else{
+            return 4;
+        }
+    }
+    else{
+        if (abs(i-j) == 2){
+            return -1;
+        }
+        else{
+            if(abs(i-j) == n-1){
+                return 1;
+            }
+            else{
+                return 0;
+            }
+        }
+    }
+}
+
+/**
+* Funció que retorna el valor de la matriu en la posició (i,j)
+*/
+double vector_position(int i, int n)
+{
+    if(i%2 == 0){
+        return (i+2)/n;
+    }
+    else{
+        return (i+1)/n;
+    }
+}
+
+
 int main()
 {
     // Creem les variables a usar
@@ -90,10 +96,9 @@ int main()
     double max_error = pow(10., -12.);
     double* vectorb;
     double* vector_solution;
-    double** matrixA;
     
     // Omplim la matriu
-    matrixA = fill_matrix(dimension);
+    //matrixA = fill_matrix(dimension);
 
     // Omplim el vector
     vectorb = fill_vector(dimension);
@@ -101,10 +106,12 @@ int main()
 
     // Alliberem memòria
     int i = 0;
+    /*
     for(i = 0; i < dimension; i++){
         free(matrixA[i]);
     }
     free(matrixA);
+    */
     free(vectorb);
     free(vector_solution);
 }
