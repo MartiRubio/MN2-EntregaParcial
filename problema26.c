@@ -78,6 +78,34 @@ int matrix_postion(int i, int j, int n)
 /**
 * Funció que retorna el valor de la matriu en la posició (i,j)
 */
+double matrix_bj_postion(int i, int j)
+{
+    if(abs(i-j) == 2){
+        if(i%2 == 0){
+            return -1./3.;
+        }
+        else{
+            return -1./4.;
+        }
+    }
+    else{
+        if(abs(i-j) == n-1){
+            if(i%2 == 0){
+                return 1./3.;
+            }
+            else{
+                return 1./4.;
+            }
+        }
+        else{
+            return 0;
+        }
+    }
+}
+
+/**
+* Funció que retorna el valor de la matriu en la posició (i,j)
+*/
 double vector_position(int i, int n)
 {
     if(i%2 == 0){
@@ -85,6 +113,15 @@ double vector_position(int i, int n)
     }
     else{
         return (i+1)/n;
+    }
+}
+
+void jacobi_method(double *vector_solution, double *vector_solution_ant, double *vectorb, int n, double max_error, double modul_Bj)
+{
+    double error = 1;
+    while (error > max_error){
+        vector_solution_ant = vector_solution;
+        vector_solution = matrix_mult(vector_solution_ant, )
     }
 }
 
@@ -96,6 +133,8 @@ int main()
     double max_error = pow(10., -12.);
     double* vectorb;
     double* vector_solution;
+    double* vector_solution_ant;
+    double modul_Bj = 2./3.;
     
     // Omplim la matriu
     //matrixA = fill_matrix(dimension);
@@ -103,7 +142,10 @@ int main()
     // Omplim el vector
     vectorb = fill_vector(dimension);
     vector_solution = fill_vector_solution(dimension);
+    vector_ant = fill_vector_solution(dimension);
 
+
+    jacobi_method(vector_solution, vector_solution_ant, vectorb, dimension, max_error, modul_Bj);
     // Alliberem memòria
     int i = 0;
     /*
