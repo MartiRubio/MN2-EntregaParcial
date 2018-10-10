@@ -116,12 +116,59 @@ double vector_position(int i, int n)
     }
 }
 
+int U_mes_L(int i, int j){
+    if (abs(i-j) == 2){
+        return -1;
+    }
+    else{
+        if(abs(i-j) == n-1){
+            return 1;
+        }
+        else{
+            return 0;
+        }
+    }
+}
+
+double* D_inversa_mult(double* v, int n)
+{
+    double* vector;
+    vector = fill_vector_solution(n);
+    for(int i = 0; i < n; i++){
+        if(i % 2 == 0){
+            vector[i] = v[i]/3;
+        }
+        else{
+            vector[i] = v[i]/4;
+        }
+    }
+    return vector;
+}
+
+double* U_mes_L_mult(double* v, int n)
+{
+    double* vector;
+    vector = fill_vector_solution(n);
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j < n; j++){
+            vector[i] += v[j]*U_mes_L(i,j);
+        }
+    }
+    return vector;
+}
+
+
 void jacobi_method(double *vector_solution, double *vector_solution_ant, double *vectorb, int n, double max_error, double modul_Bj)
 {
     double error = 1;
     while (error > max_error){
         vector_solution_ant = vector_solution;
-        vector_solution = matrix_mult(vector_solution_ant, )
+        vector_solution = U_mes_L_mult(vector_solution, n);
+        for(int i = 0; i < n; i++){
+            vector_solution[i] = vectorb[i] - vector_solution[i];
+        }
+        vector_solution = D_inversa_mult(vector_solution, n);
+        error = infinite_norm(vector_solution, vector_solution_ant);
     }
 }
 
