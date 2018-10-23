@@ -224,6 +224,11 @@ void jacobi_method(double *vector_solution, double *vector_solution_ant, double 
         // printf("%i\n", Iteration);
     }
     printf("Total d'iteracions: %i\n", Iteration - 1);
+    printf("%.12f\n", vector_solution[1]);
+    printf("%.12f\n", vector_solution[12335]);
+    printf("%.12f\n", vector_solution[34987]);
+    printf("%.12f\n", vector_solution[98765]);
+    printf("%.12f\n", vector_solution[444555]);
 }
 
 /*
@@ -247,6 +252,11 @@ void gauss_seidel_method(double *vector_solution, double *vector_solution_ant, d
         // printf("%i\n", Iteration);
     }
     printf("Total d'iteracions: %i\n", Iteration - 1);
+    printf("%.12f\n", vector_solution[1]);
+    printf("%.12f\n", vector_solution[12335]);
+    printf("%.12f\n", vector_solution[34987]);
+    printf("%.12f\n", vector_solution[98765]);
+    printf("%.12f\n", vector_solution[444555]);
 }
 
 /*
@@ -255,8 +265,8 @@ void gauss_seidel_method(double *vector_solution, double *vector_solution_ant, d
 void SOR_method(double *vector_solution, double *vector_solution_ant, double *vectorb, int n, double max_error, double omega){
     double error = 1.;
     int Iteration = 1;
-    printf("Iteration: %i\n", Iteration);
-    printf("%f\n", error);
+    //printf("Iteration: %i\n", Iteration);
+    //printf("%f\n", error);
     while (error > max_error){
         assign_vectors(vector_solution_ant, vector_solution, n);
         // vector_solution_ant = vector_solution;
@@ -266,11 +276,16 @@ void SOR_method(double *vector_solution, double *vector_solution_ant, double *ve
             vector_solution[i] = (1. - omega)*vector_solution_ant[i] + vector_solution[i]*omega;
         }
         error = infinite_norm(vector_solution, vector_solution_ant, n);
-        printf("E:    %f *10^-9\n", error*1000000000);
+        //printf("E:    %f *10^-9\n", error*1000000000);
         Iteration++;
-        printf("%i\n", Iteration);
+        // printf("%i\n", Iteration);
     }
-    printf("Total d'iteracions: %i\n", Iteration - 1);
+    printf("Omega: %f\tTotal d'iteracions: %i\n", omega, Iteration - 1);
+    printf("%.12f\n", vector_solution[1]);
+    printf("%.12f\n", vector_solution[12335]);
+    printf("%.12f\n", vector_solution[34987]);
+    printf("%.12f\n", vector_solution[98765]);
+    printf("%.12f\n", vector_solution[444555]);
 }
 
 
@@ -283,7 +298,7 @@ int main()
     double* vector_solution;
     double* vector_solution_ant;
     double modul_Bj = 2./3.;
-    double omega = 1;
+    double omega = 1.;
 
     // Omplim la matriu
     //matrixA = fill_matrix(dimension);
@@ -325,9 +340,6 @@ int main()
     printf("Temps del mètode de Gauss-Seidel: %f\n", cpu_time_used);
 
     // Tornem a omplir els vectors 
-    vectorb = fill_vector(dimension);
-    vector_solution = fill_vector_solution(dimension);
-    vector_solution_ant = fill_vector_solution(dimension);
     printf("\n\n**************\n");
     printf("*            *\n");
     printf("* MÈTODE SOR *\n");
@@ -335,7 +347,13 @@ int main()
     printf("**************\n");
 
     start = clock();
-    SOR_method(vector_solution, vector_solution_ant, vectorb, dimension, max_error, omega);
+    for(int k = 3; k < 20; k++){
+        omega = k/10.;
+        vectorb = fill_vector(dimension);
+        vector_solution = fill_vector_solution(dimension);
+        vector_solution_ant = fill_vector_solution(dimension);
+        SOR_method(vector_solution, vector_solution_ant, vectorb, dimension, max_error, omega);
+    }
     end = clock();
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
     printf("Temps del mètode SOR: %f\n", cpu_time_used);
