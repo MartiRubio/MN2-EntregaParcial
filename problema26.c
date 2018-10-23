@@ -41,7 +41,7 @@ double infinite_norm(double *vectorb, double *vectorx, int n)
     int i = 1;
     double norm = fabs(vectorb[0] - vectorx[0]);
     for (i = 1; i <n; i++){
-        if (norm > fabs(vectorb[i] - vectorx[i])){
+        if (norm <   fabs(vectorb[i] - vectorx[i])){
             norm = fabs(vectorb[i] - vectorx[i]);
         }
     }
@@ -83,19 +83,19 @@ double matrix_bj_postion(int i, int j, int n)
 {
     if(abs(i-j) == 2){
         if(i%2 == 0){
-            return -1./3.;
+            return 1./3.;
         }
         else{
-            return -1./4.;
+            return 1./4.;
         }
     }
     else{
         if(abs(i-j) == n-1){
             if(i%2 == 0){
-                return 1./3.;
+                return -1./3.;
             }
             else{
-                return 1./4.;
+                return -1./4.;
             }
         }
         else{
@@ -263,7 +263,7 @@ void SOR_method(double *vector_solution, double *vector_solution_ant, double *ve
         for(int i = 0; i < n; i++){
             vector_solution[i] = vectorb[i] - U_mes_L_fila_i_mult(vector_solution, vector_solution_ant, i, n);
             vector_solution[i] = vector_solution[i]/matrix_postion(i,i,n);
-            vector_solution[i] = vector_solution_ant[i] + vector_solution[i]*omega;
+            vector_solution[i] = (1. - omega)*vector_solution_ant[i] + vector_solution[i]*omega;
         }
         error = infinite_norm(vector_solution, vector_solution_ant, n);
         printf("E:    %f *10^-9\n", error*1000000000);
@@ -283,7 +283,7 @@ int main()
     double* vector_solution;
     double* vector_solution_ant;
     double modul_Bj = 2./3.;
-    double omega = -0.2;
+    double omega = 1;
 
     // Omplim la matriu
     //matrixA = fill_matrix(dimension);
