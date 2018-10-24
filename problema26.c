@@ -41,7 +41,7 @@ double infinite_norm(double *vectorb, double *vectorx, int n)
     int i = 1;
     double norm = fabs(vectorb[0] - vectorx[0]);
     for (i = 1; i <n; i++){
-        if (norm <   fabs(vectorb[i] - vectorx[i])){
+        if (norm < fabs(vectorb[i] - vectorx[i])){
             norm = fabs(vectorb[i] - vectorx[i]);
         }
     }
@@ -66,7 +66,7 @@ int matrix_postion(int i, int j, int n)
             return -1.;
         }
         else{
-            if(abs(i-j) == n-1){
+            if(abs(i-j) == n-2){
                 return 1.;
             }
             else{
@@ -90,7 +90,7 @@ double matrix_bj_postion(int i, int j, int n)
         }
     }
     else{
-        if(abs(i-j) == n-1){
+        if(abs(i-j) == n-2){
             if(i%2 == 0){
                 return -1./3.;
             }
@@ -122,7 +122,7 @@ int U_mes_L(int i, int j, int n){
         return -1.;
     }
     else{
-        if(abs(i-j) == n-1){
+        if(abs(i-j) == n-2){
             return 1.;
         }
         else{
@@ -159,7 +159,7 @@ double* U_mes_L_mult(double* v, int n)
     for(int i = 0; i < n; i++){
         if (i < 2){
             vector[i] += U_mes_L(i,i+2,n)*v[i+2];
-            vector[i] += U_mes_L(i,n+1-i,n)*v[n+1-i];
+            vector[i] += U_mes_L(i,n-2+i,n)*v[n-2+i];
         }
         else{
             if (i == n - 2){
@@ -223,12 +223,11 @@ void jacobi_method(double *vector_solution, double *vector_solution_ant, double 
         Iteration++;
         // printf("%i\n", Iteration);
     }
-    printf("Total d'iteracions: %i\n", Iteration - 1);
+    printf("%.12f\n", vector_solution[0]);
     printf("%.12f\n", vector_solution[1]);
-    printf("%.12f\n", vector_solution[12335]);
-    printf("%.12f\n", vector_solution[34987]);
-    printf("%.12f\n", vector_solution[98765]);
-    printf("%.12f\n", vector_solution[444555]);
+    printf("%.12f\n", vector_solution[2]);
+    printf("%.12f\n", vector_solution[3]);
+    printf("Total d'iteracions: %i\n", Iteration - 1);
 }
 
 /*
@@ -251,12 +250,11 @@ void gauss_seidel_method(double *vector_solution, double *vector_solution_ant, d
         Iteration++;
         // printf("%i\n", Iteration);
     }
-    printf("Total d'iteracions: %i\n", Iteration - 1);
+    printf("%.12f\n", vector_solution[0]);
     printf("%.12f\n", vector_solution[1]);
-    printf("%.12f\n", vector_solution[12335]);
-    printf("%.12f\n", vector_solution[34987]);
-    printf("%.12f\n", vector_solution[98765]);
-    printf("%.12f\n", vector_solution[444555]);
+    printf("%.12f\n", vector_solution[2]);
+    printf("%.12f\n", vector_solution[3]);
+    printf("Total d'iteracions: %i\n", Iteration - 1);
 }
 
 /*
@@ -280,12 +278,7 @@ void SOR_method(double *vector_solution, double *vector_solution_ant, double *ve
         Iteration++;
         // printf("%i\n", Iteration);
     }
-    printf("Omega: %f\tTotal d'iteracions: %i\n", omega, Iteration - 1);
-    printf("%.12f\n", vector_solution[1]);
-    printf("%.12f\n", vector_solution[12335]);
-    printf("%.12f\n", vector_solution[34987]);
-    printf("%.12f\n", vector_solution[98765]);
-    printf("%.12f\n", vector_solution[444555]);
+    printf("\\item \\texttt{Omega: %f\tTotal d'iteracions: %i}\n", omega, Iteration - 1);
 }
 
 
@@ -347,8 +340,8 @@ int main()
     printf("**************\n");
 
     start = clock();
-    for(int k = 3; k < 20; k++){
-        omega = k/10.;
+    for(int k = 1; k < 10; k++){
+        omega = 1.1 + k/50.;
         vectorb = fill_vector(dimension);
         vector_solution = fill_vector_solution(dimension);
         vector_solution_ant = fill_vector_solution(dimension);
