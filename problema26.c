@@ -185,7 +185,7 @@ double U_mes_L_fila_i_mult(double* v, double* v_ant, int i, int n){
     if(i < 2){
         result = v_ant[i + 2]*U_mes_L(i, i+2, n) + v_ant[n-2+i]*U_mes_L(i, n-2+i, n);
     }
-    else if(i > n - 2){
+    else if(i > n - 3){
         result = v[i - 2]*U_mes_L(i, i-2, n) + v[i-n+2]*U_mes_L(i, i-n+2, n);
     }
     else{
@@ -258,26 +258,31 @@ void gauss_seidel_method(double *vector_solution, double *vector_solution_ant, d
 }
 
 /*
-* Mètode que aplica l'algoritme de Gauss-Seidel
+* Mètode que aplica l'algoritme SOR
 */
 void SOR_method(double *vector_solution, double *vector_solution_ant, double *vectorb, int n, double max_error, double omega){
     double error = 1.;
     int Iteration = 1;
     //printf("Iteration: %i\n", Iteration);
     //printf("%f\n", error);
+    omega = -0.5;
     while (error > max_error){
         assign_vectors(vector_solution_ant, vector_solution, n);
         // vector_solution_ant = vector_solution;
         for(int i = 0; i < n; i++){
             vector_solution[i] = vectorb[i] - U_mes_L_fila_i_mult(vector_solution, vector_solution_ant, i, n);
             vector_solution[i] = vector_solution[i]/matrix_postion(i,i,n);
-            vector_solution[i] = (1. - omega)*vector_solution_ant[i] + vector_solution[i]*omega;
+            vector_solution[i] = vector_solution_ant[i] + vector_solution[i]*omega;
         }
         error = infinite_norm(vector_solution, vector_solution_ant, n);
-        //printf("E:    %f *10^-9\n", error*1000000000);
+        printf("E:    %f *10^-9\n", error*1000000000);
         Iteration++;
         // printf("%i\n", Iteration);
     }
+    printf("%.12f\n", vector_solution[0]);
+    printf("%.12f\n", vector_solution[1]);
+    printf("%.12f\n", vector_solution[2]);
+    printf("%.12f\n", vector_solution[3]);
     printf("\\item \\texttt{Omega: %f\tTotal d'iteracions: %i}\n", omega, Iteration - 1);
 }
 
