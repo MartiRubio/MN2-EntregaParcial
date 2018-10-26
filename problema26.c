@@ -284,17 +284,13 @@ void SOR_method(double *vector_solution, double *vector_solution_ant, double *ve
         for(int i = 0; i < n; i++){
             vector_solution[i] = vectorb[i] - U_mes_L_fila_i_mult(vector_solution, vector_solution_ant, i, n);
             vector_solution[i] = vector_solution[i]/matrix_postion(i,i,n);
-            vector_solution[i] = vector_solution_ant[i] + vector_solution[i]*omega;
+            vector_solution[i] = (1 - omega)*vector_solution_ant[i] + vector_solution[i]*omega;
         }
         error = infinite_norm(vector_solution, vector_solution_ant, n);
-        printf("E:    %f *10^-9\n", error*1000000000);
+        //printf("E:    %f *10^-9\n", error*1000000000);
         Iteration++;
         // printf("%i\n", Iteration);
     }
-    printf("%.12f\n", vector_solution[0]);
-    printf("%.12f\n", vector_solution[1]);
-    printf("%.12f\n", vector_solution[2]);
-    printf("%.12f\n", vector_solution[3]);
     printf("\\item \\texttt{Omega: %f\tTotal d'iteracions: %i}\n", omega, Iteration - 1);
 }
 
@@ -357,7 +353,7 @@ int main()
     printf("**************\n");
 
     start = clock();
-    for(int k = 1; k < 20; k++){
+    for(int k = 10; k < 20; k++){
         omega = k/10.;
         vectorb = fill_vector(dimension);
         vector_solution = fill_vector_solution(dimension);
