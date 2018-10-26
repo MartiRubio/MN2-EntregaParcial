@@ -1,13 +1,31 @@
+// Author: Martí Rubio
+// Codi @ https://github.com/MartiRubio/MN2-EntregaParcial
+
+/*
+Codi per al problema 26 de la llista 1 de Mètodes Numèrics II
+*/
+
+// Includes necessaris
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
 
 
-/*
-Codi per al problema 26 de la llista 1 de Mètodes Numèrics II
-*/
-
+//Functions declaration
+double* fill_vector(int);
+double* fill_vector_solution(int);
+double infinite_norm(double*, double*, int);
+int matrix_postion(int, int, int);
+int U_mes_L(int, int, int);
+double* D_inversa_mult(double*, int);
+double* U_mes_L_mult(double*, int);
+double U_mes_L_fila_i_mult(double*, double*, int, int);
+double U_mes_L_fila_i_mult(double*, double*, int, int);
+void assign_vectors(double*, double*, int);
+void jacobi_method(double*, double*, double*, int, double);
+void gauss_seidel_method(double*, double*, double*, int, double);
+void SOR_method(double*, double*, double*, int, double, double);
 
 
 /**
@@ -39,6 +57,7 @@ double* fill_vector_solution(int n)
     return vectorx;
 }
 
+
 /**
 * Funció per a calcular la norma infinit entre dos vectors
 */
@@ -53,6 +72,7 @@ double infinite_norm(double *vectorb, double *vectorx, int n)
     }
     return norm;
 }
+
 
 /**
 * Funció que retorna el valor de la matriu en la posició (i,j)
@@ -82,51 +102,12 @@ int matrix_postion(int i, int j, int n)
     }
 }
 
-/**
-* Funció que retorna el valor de la matriu Bj en la posició (i,j)
-*/
-double matrix_bj_postion(int i, int j, int n)
-{
-    if(abs(i-j) == 2){
-        if(i%2 == 0){
-            return 1./3.;
-        }
-        else{
-            return 1./4.;
-        }
-    }
-    else{
-        if(abs(i-j) == n-2){
-            if(i%2 == 0){
-                return -1./3.;
-            }
-            else{
-                return -1./4.;
-            }
-        }
-        else{
-            return 0;
-        }
-    }
-}
-
-/**
-* Funció que retorna el valor del vector b en la fila i
-*/
-double vector_position(int i, int n)
-{
-    if(i%2 == 0){
-        return (i+2.)/n;
-    }
-    else{
-        return (i+1.)/n;
-    }
-}
 
 /**
 * Funció que retorna el valor de la matriu U+L a la posició (i,j)
 */
-int U_mes_L(int i, int j, int n){
+int U_mes_L(int i, int j, int n)
+{
     if (abs(i-j) == 2){
         return -1.;
     }
@@ -139,6 +120,7 @@ int U_mes_L(int i, int j, int n){
         }
     }
 }
+
 
 /*
 * Funció que multiplica el vector v per la matriu D^{-1}
@@ -157,6 +139,7 @@ double* D_inversa_mult(double* v, int n)
     }
     return vector;
 }
+
 
 /*
 * Funció que multiplica el vector v per la matriu U+L
@@ -189,10 +172,12 @@ double* U_mes_L_mult(double* v, int n)
     return vector;
 }
 
+
 /*
 * Funció que multiplica el vector v i v_anterior per la matriu U+L (mode Gauss Seidel)
 */
-double U_mes_L_fila_i_mult(double* v, double* v_ant, int i, int n){
+double U_mes_L_fila_i_mult(double* v, double* v_ant, int i, int n)
+{
     double result = 0.;
     if(i < 2){
         result = v_ant[i + 2]*U_mes_L(i, i+2, n) + v_ant[n-2+i]*U_mes_L(i, n-2+i, n);
@@ -207,7 +192,11 @@ double U_mes_L_fila_i_mult(double* v, double* v_ant, int i, int n){
 }
 
 
-void assign_vectors(double* v_ant, double* v, int n){
+/*
+* Posem al vector anterior el contingut del vector actual
+*/
+void assign_vectors(double* v_ant, double* v, int n)
+{
     for(int i = 0; i < n; i++){
         v_ant[i] = v[i];
     }
@@ -218,142 +207,216 @@ void assign_vectors(double* v_ant, double* v, int n){
 */
 void jacobi_method(double *vector_solution, double *vector_solution_ant, double *vectorb, int n, double max_error)
 {
+
+    // variables de la fució
     double error = 1.;
     int Iteration = 1;
-    // printf("Iteration: %i\n", Iteration);
-    // printf("%f\n", error);
+
+    // Mentre l'error sigui major al mínim esperat
     while (error > max_error){
-        //assign_vectors(vector_solution_ant, vector_solution, n);
+
+        // Posem al vector anterior el vector actual
         vector_solution_ant = vector_solution;
+
+        // Apliquem el mètode de Jacobi
         vector_solution = U_mes_L_mult(vector_solution, n);
         for(int i = 0; i < n; i++){
             vector_solution[i] = vectorb[i] - vector_solution[i];
         }
         vector_solution = D_inversa_mult(vector_solution, n);
+
+        // Calculem la norma infinit entre els dos vectors
         error = infinite_norm(vector_solution, vector_solution_ant, n);
-        // printf("E:    %f *10^-9\n", error*1000000000);
+
+        // Calculem la norma infinit entre els dos vectors
         Iteration++;
-        // printf("%i\n", Iteration);
     }
-    printf("%.12f\n", vector_solution[0]);
-    printf("%.12f\n", vector_solution[1]);
-    printf("%.12f\n", vector_solution[2]);
-    printf("%.12f\n", vector_solution[3]);
+
+    // Imprimim el nombre d'iteracions
     printf("Total d'iteracions: %i\n", Iteration - 1);
 }
+
 
 /*
 * Mètode que aplica l'algoritme de Gauss-Seidel
 */
-void gauss_seidel_method(double *vector_solution, double *vector_solution_ant, double *vectorb, int n, double max_error){
+void gauss_seidel_method(double *vector_solution, double *vector_solution_ant, double *vectorb, int n, double max_error)
+{
+
+    // Variables de la funció
     double error = 1.;
     int Iteration = 1;
-    // printf("Iteration: %i\n", Iteration);
-    // printf("%f\n", error);
+
+    // Mentre l'error sigui major al mínim esperat
     while (error > max_error){
+
+        // Posem al vector anterior el vector actual
         assign_vectors(vector_solution_ant, vector_solution, n);
-        // vector_solution_ant = vector_solution;
+
+        // Per cada fila de la matriu
         for(int i = 0; i < n; i++){
+
+            // Apliquem el mètode de Gauss-Seidel
             vector_solution[i] = vectorb[i] - U_mes_L_fila_i_mult(vector_solution, vector_solution_ant, i, n);
             vector_solution[i] = vector_solution[i]/matrix_postion(i,i,n);
         }
+
+        // Calculem la norma infinit entre els dos vectors
         error = infinite_norm(vector_solution, vector_solution_ant, n);
-        // printf("E:    %f *10^-9\n", error*1000000000);
+
+        // Sumem una iteració
         Iteration++;
-        // printf("%i\n", Iteration);
     }
-    printf("%.12f\n", vector_solution[0]);
-    printf("%.12f\n", vector_solution[1]);
-    printf("%.12f\n", vector_solution[2]);
-    printf("%.12f\n", vector_solution[3]);
+
+    // Imprimim el nombre d'iteracions
     printf("Total d'iteracions: %i\n", Iteration - 1);
 }
+
 
 /*
 * Mètode que aplica l'algoritme SOR
 */
-void SOR_method(double *vector_solution, double *vector_solution_ant, double *vectorb, int n, double max_error, double omega){
+void SOR_method(double *vector_solution, double *vector_solution_ant, double *vectorb, int n, double max_error, double omega)
+{
+
+    // Variables de la funció
     double error = 1.;
     int Iteration = 1;
-    //printf("Iteration: %i\n", Iteration);
-    //printf("%f\n", error);
-    // omega = -0.5;
+
+    // Mentre l'error sigui major al mínim esperat
     while (error > max_error){
+
+        // Posem al vector anterior el vector actual
         assign_vectors(vector_solution_ant, vector_solution, n);
-        // vector_solution_ant = vector_solution;
+
+        // Per cada fila de la matriu
         for(int i = 0; i < n; i++){
+
+            // Apliquem el mètode SOR
             vector_solution[i] = vectorb[i] - U_mes_L_fila_i_mult(vector_solution, vector_solution_ant, i, n);
             vector_solution[i] = vector_solution[i]/matrix_postion(i,i,n);
             vector_solution[i] = (1 - omega)*vector_solution_ant[i] + vector_solution[i]*omega;
         }
+
+        // Calculem la norma infinit entre els dos vectors
         error = infinite_norm(vector_solution, vector_solution_ant, n);
-        //printf("E:    %f *10^-9\n", error*1000000000);
+
+        // Sumem una iteració
         Iteration++;
-        // printf("%i\n", Iteration);
     }
-    printf("\\item \\texttt{Omega: %f\tTotal d'iteracions: %i}\n", omega, Iteration - 1);
+
+    // Imprimim el nombre d'iteracions
+    printf("Total d'iteracions: %i\n", Iteration - 1);
 }
 
 
+/*
+* Funció main, crida als tres mètodes
+*/
 int main()
 {
+
     // Creem les variables a usar
     int dimension = 1000000;
     double max_error = pow(10., -12.);
     double* vectorb;
     double* vector_solution;
     double* vector_solution_ant;
-    double modul_Bj = 2./3.;
-    double omega = 1.;
-
-    // Omplim la matriu
-    //matrixA = fill_matrix(dimension);
+    clock_t start, end;
+    double cpu_time_used;
 
     // Omplim el vector
     vectorb = fill_vector(dimension);
     vector_solution = fill_vector_solution(dimension);
     vector_solution_ant = fill_vector_solution(dimension);
 
+    // Mètode de Jacobi
     printf("\n\n********************\n");
     printf("*                  *\n");
     printf("* MÈTODE DE JACOBI *\n");
     printf("*                  *\n");
     printf("********************\n");
-    
-    clock_t start, end;
-    double cpu_time_used;
 
+    // Iniciem el cronòmetre
     start = clock();
+
+    // Cridem al mètode de Jacobi
     jacobi_method(vector_solution, vector_solution_ant, vectorb, dimension, max_error);
+
+    // Aturem el cronòmetre
     end = clock();
+
+    // Calculem i imprimim el temps que s'ha trigat en fer totes les iteracions
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
     printf("Temps del mètode de Jacobi: %f\n", cpu_time_used);
 
-    // Tornem a omplir els vectors 
+
+    // Tornem a inicialitzar els vectors 
     vectorb = fill_vector(dimension);
     vector_solution = fill_vector_solution(dimension);
     vector_solution_ant = fill_vector_solution(dimension);
+
+    // Mètode de Gauss-Seidel
     printf("\n\n**************************\n");
     printf("*                        *\n");
     printf("* MÈTODE DE GAUSS-SEIDEL *\n");
     printf("*                        *\n");
     printf("**************************\n");
 
+    // Iniciem el cronòmetre
     start = clock();
+
+    // Cridem al mètode de Gauss-Seidel
     gauss_seidel_method(vector_solution, vector_solution_ant, vectorb, dimension, max_error);
+
+    // Aturem el cronòmetre
     end = clock();
+
+    // Calculem i imprimim el temps que s'ha trigat en fer totes les iteracions
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
     printf("Temps del mètode de Gauss-Seidel: %f\n", cpu_time_used);
 
+
     // Tornem a omplir els vectors 
+    vectorb = fill_vector(dimension);
+    vector_solution = fill_vector_solution(dimension);
+    vector_solution_ant = fill_vector_solution(dimension);
+
+    // Mètode SOR
     printf("\n\n**************\n");
     printf("*            *\n");
     printf("* MÈTODE SOR *\n");
     printf("*            *\n");
     printf("**************\n");
 
+    // Creem la millor omega (la manera com la hem trobat es troba al PDF i al codi comentat al final d'aquesta funció)
+    double best_omega = 1.15;
+    
+    // Iniciem el cronòmetre
     start = clock();
-    for(int k = 10; k < 20; k++){
+
+    // Cridem al mètode SOR
+    SOR_method(vector_solution, vector_solution_ant, vectorb, dimension, max_error, best_omega);
+
+    // Aturem el cronòmetre
+    end = clock();
+
+    // Imprimim l'omega usada
+    printf("Omega usada: %.2f\n", best_omega);
+
+    // Calculem i imprimim el temps que s'ha trigat en fer totes les iteracions
+    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+    printf("Temps del mètode SOR: %f\n", cpu_time_used);
+
+
+    // Codis per a trobar la millor omega
+
+
+    // Codi per a provar omega entre 0 i 2 en escala 0.1
+    /*
+    double omega;
+    start = clock();
+    for(int k = 1; k < 20; k++){
         omega = k/10.;
         vectorb = fill_vector(dimension);
         vector_solution = fill_vector_solution(dimension);
@@ -363,12 +426,30 @@ int main()
     end = clock();
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
     printf("Temps del mètode SOR: %f\n", cpu_time_used);
-    /*
-    for(i = 0; i < dimension; i++){
-        free(matrixA[i]);
-    }
-    free(matrixA);
     */
+
+
+    // Codi per a provar omega entre 1.1 i 1.2 en escala 0.01
+    /*
+    double omega;
+    start = clock();
+    for(int k = 0; k < 11; k++){
+        omega = 1.1 + k/100.;
+        vectorb = fill_vector(dimension);
+        vector_solution = fill_vector_solution(dimension);
+        vector_solution_ant = fill_vector_solution(dimension);
+        SOR_method(vector_solution, vector_solution_ant, vectorb, dimension, max_error, omega);
+    }
+    end = clock();
+    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+    printf("Temps del mètode SOR: %f\n", cpu_time_used);
+    */
+
+    // Alliberem la memòria dels vectors
     free(vectorb);
     free(vector_solution);
+    free(vector_solution_ant);
+
+    // Tot ha anat bé, retornem un zero
+    return 0;
 }
