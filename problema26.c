@@ -4,8 +4,14 @@
 #include <time.h>
 
 
+/*
+Codi per al problema 26 de la llista 1 de Mètodes Numèrics II
+*/
+
+
+
 /**
-* Funció per a omplir el vector solució
+* Funció per a omplir el vector b
 */
 double* fill_vector(int n)
 {
@@ -21,7 +27,7 @@ double* fill_vector(int n)
 }
 
 /**
-* Funció per a omplir el vector solució
+* Funció per a omplir el vector solució (inicialitzat a zero)
 */
 double* fill_vector_solution(int n)
 {
@@ -34,7 +40,7 @@ double* fill_vector_solution(int n)
 }
 
 /**
-* Funció per a calcular la norma infinit d'una matriu
+* Funció per a calcular la norma infinit entre dos vectors
 */
 double infinite_norm(double *vectorb, double *vectorx, int n)
 {
@@ -77,7 +83,7 @@ int matrix_postion(int i, int j, int n)
 }
 
 /**
-* Funció que retorna el valor de la matriu en la posició (i,j)
+* Funció que retorna el valor de la matriu Bj en la posició (i,j)
 */
 double matrix_bj_postion(int i, int j, int n)
 {
@@ -117,6 +123,9 @@ double vector_position(int i, int n)
     }
 }
 
+/**
+* Funció que retorna el valor de la matriu U+L a la posició (i,j)
+*/
 int U_mes_L(int i, int j, int n){
     if (abs(i-j) == 2){
         return -1.;
@@ -180,8 +189,11 @@ double* U_mes_L_mult(double* v, int n)
     return vector;
 }
 
+/*
+* Funció que multiplica el vector v i v_anterior per la matriu U+L (mode Gauss Seidel)
+*/
 double U_mes_L_fila_i_mult(double* v, double* v_ant, int i, int n){
-    double result;
+    double result = 0.;
     if(i < 2){
         result = v_ant[i + 2]*U_mes_L(i, i+2, n) + v_ant[n-2+i]*U_mes_L(i, n-2+i, n);
     }
@@ -265,7 +277,7 @@ void SOR_method(double *vector_solution, double *vector_solution_ant, double *ve
     int Iteration = 1;
     //printf("Iteration: %i\n", Iteration);
     //printf("%f\n", error);
-    omega = -0.5;
+    // omega = -0.5;
     while (error > max_error){
         assign_vectors(vector_solution_ant, vector_solution, n);
         // vector_solution_ant = vector_solution;
@@ -345,8 +357,8 @@ int main()
     printf("**************\n");
 
     start = clock();
-    for(int k = 1; k < 10; k++){
-        omega = 1.1 + k/50.;
+    for(int k = 1; k < 20; k++){
+        omega = k/10.;
         vectorb = fill_vector(dimension);
         vector_solution = fill_vector_solution(dimension);
         vector_solution_ant = fill_vector_solution(dimension);
