@@ -23,9 +23,9 @@ double* U_mes_L_mult(double*, int);
 double U_mes_L_fila_i_mult(double*, double*, int, int);
 double U_mes_L_fila_i_mult(double*, double*, int, int);
 void assign_vectors(double*, double*, int);
-void jacobi_method(double*, double*, double*, int, double);
-void gauss_seidel_method(double*, double*, double*, int, double);
-void SOR_method(double*, double*, double*, int, double, double);
+void jacobi_method(double*, double*, double*, int, double, double);
+void gauss_seidel_method(double*, double*, double*, int, double, double);
+void SOR_method(double*, double*, double*, int, double, double, double);
 
 
 /**
@@ -205,7 +205,7 @@ void assign_vectors(double* v_ant, double* v, int n)
 /*
 * Mètode que aplica l'algoritme de Jacobi
 */
-void jacobi_method(double *vector_solution, double *vector_solution_ant, double *vectorb, int n, double max_error)
+void jacobi_method(double *vector_solution, double *vector_solution_ant, double *vectorb, int n, double max_error, double norma_bj)
 {
 
     // variables de la fució
@@ -226,7 +226,7 @@ void jacobi_method(double *vector_solution, double *vector_solution_ant, double 
         vector_solution = D_inversa_mult(vector_solution, n);
 
         // Calculem la norma infinit entre els dos vectors
-        error = infinite_norm(vector_solution, vector_solution_ant, n);
+        error = (norma_bj/(1.-norma_bj))*infinite_norm(vector_solution, vector_solution_ant, n);
 
         // Calculem la norma infinit entre els dos vectors
         Iteration++;
@@ -240,7 +240,7 @@ void jacobi_method(double *vector_solution, double *vector_solution_ant, double 
 /*
 * Mètode que aplica l'algoritme de Gauss-Seidel
 */
-void gauss_seidel_method(double *vector_solution, double *vector_solution_ant, double *vectorb, int n, double max_error)
+void gauss_seidel_method(double *vector_solution, double *vector_solution_ant, double *vectorb, int n, double max_error, double norma_bgs)
 {
 
     // Variables de la funció
@@ -262,7 +262,7 @@ void gauss_seidel_method(double *vector_solution, double *vector_solution_ant, d
         }
 
         // Calculem la norma infinit entre els dos vectors
-        error = infinite_norm(vector_solution, vector_solution_ant, n);
+        error = (norma_bgs/(1.-norma_bgs))*infinite_norm(vector_solution, vector_solution_ant, n);
 
         // Sumem una iteració
         Iteration++;
@@ -276,7 +276,7 @@ void gauss_seidel_method(double *vector_solution, double *vector_solution_ant, d
 /*
 * Mètode que aplica l'algoritme SOR
 */
-void SOR_method(double *vector_solution, double *vector_solution_ant, double *vectorb, int n, double max_error, double omega)
+void SOR_method(double *vector_solution, double *vector_solution_ant, double *vectorb, int n, double max_error, double omega, double norma_bgs)
 {
 
     // Variables de la funció
@@ -299,7 +299,7 @@ void SOR_method(double *vector_solution, double *vector_solution_ant, double *ve
         }
 
         // Calculem la norma infinit entre els dos vectors
-        error = infinite_norm(vector_solution, vector_solution_ant, n);
+        error = (norma_bgs/(1.-norma_bgs))*infinite_norm(vector_solution, vector_solution_ant, n);
 
         // Sumem una iteració
         Iteration++;
@@ -324,6 +324,8 @@ int main()
     double* vector_solution_ant;
     clock_t start, end;
     double cpu_time_used;
+    double norma_bj = 2./3.;
+    double norma_bgs = 2./3.;
 
     // Omplim el vector
     vectorb = fill_vector(dimension);
@@ -341,7 +343,7 @@ int main()
     start = clock();
 
     // Cridem al mètode de Jacobi
-    jacobi_method(vector_solution, vector_solution_ant, vectorb, dimension, max_error);
+    jacobi_method(vector_solution, vector_solution_ant, vectorb, dimension, max_error, norma_bj);
 
     // Aturem el cronòmetre
     end = clock();
@@ -367,7 +369,7 @@ int main()
     start = clock();
 
     // Cridem al mètode de Gauss-Seidel
-    gauss_seidel_method(vector_solution, vector_solution_ant, vectorb, dimension, max_error);
+    gauss_seidel_method(vector_solution, vector_solution_ant, vectorb, dimension, max_error, norma_bgs);
 
     // Aturem el cronòmetre
     end = clock();
@@ -396,7 +398,7 @@ int main()
     start = clock();
 
     // Cridem al mètode SOR
-    SOR_method(vector_solution, vector_solution_ant, vectorb, dimension, max_error, best_omega);
+    SOR_method(vector_solution, vector_solution_ant, vectorb, dimension, max_error, best_omega, norma_bgs);
 
     // Aturem el cronòmetre
     end = clock();
